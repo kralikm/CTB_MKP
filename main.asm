@@ -1,8 +1,10 @@
-; Jednoduchý Blink pro ATmega328P s frekvencí 1Hz a zpožděním 5 sekund
+; Jednoduchý Blink pro ATmega328P s frekvencí 1Hz a zpožděním 5 cyklu
 ; LED na PB5 (Arduino Uno - pin 13)
+.def dly = r17 ;definice aliasu pro registr r17 - zde ukladam delay 
 
-.org 0x0000          ; Reset vektor na začátku paměti
-    rjmp RESET       ; Skok na hlavní program
+	ldi dly, 5 ;NASTAVENI DELAY
+	
+rjmp RESET       ; Skok na hlavní program
 
 RESET:
     ; Nastavení PB5 jako výstup
@@ -22,15 +24,10 @@ Loop:
 
     rjmp Loop        ; Nekonečná smyčka
 
-; Jednoduchá smyčka na zpoždění 5 sekund
+; Jednoduchá smyčka na zpoždění 5 cyklu
 Delay:
-    ldi r18, 0x05    ; Nastavíme zpoždění na 5 sekund
-Del1:
-    ldi r19, 0x01    ; Každá smyčka trvá 1 sekundu
+    mov r18, dly    ; Nastavíme pocitadlo na hodnotu dly
 Del2:
-    nop              ; No operation (trvá 1 cyklus)
-    dec r19          ; Snížíme r19 o 1
-    brne Del2        ; Pokud r19 != 0, pokračuj vnitřní smyčkou
     dec r18          ; Snížíme r18 o 1
-    brne Del1        ; Pokud r18 != 0, pokračuj vnější smyčkou
+    brne Del2        ; Pokud r18 != 0, pokračuj ve snizovani
     ret              ; Vrátíme se zpět
